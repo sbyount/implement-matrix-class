@@ -43,7 +43,7 @@ class Matrix(object):
     # TODO - your code here
     # For a 1x1 matrix, just return the value
     if self.h == 1:
-      return self.g[0]
+      return self.g[0][0]
     elif self.h == 2:
       return  (self.g[0][0] * self.g[1][1]) -  (self.g[0][1] * self.g[1][0])
     # # Alternate Solution to support larger matrices
