@@ -92,4 +92,17 @@ def equal(m1, m2):
                 return False
     return True
 
+rect_ones = m.Matrix([
+    [1,0,0],
+    [1,0,0]
+    ])
+
+rect_T = m.Matrix([
+    [1,1],
+    [0,0],
+    [0,0]
+    ])
+
+assert equal(rect_ones.T(), rect_T), "Assert transpose non-square"
+
 test()

@@ -62,10 +62,13 @@ class Matrix(object):
         raise ValueError("Cannot calculate the trace of a non-square matrix.")
 
     # TODO - your code here
-    t = 0
-    for i in range(self.w):
-        t += self[i][i]
-    return t
+    # t = 0
+    # for i in range(self.w):
+    #     t += self[i][i]
+    # return t
+
+    # Trying list comprehension as suggested by project reviewer.
+    return sum([self.g[i][i] for i in range(self.w)])
 
   def inverse(self):
     """
@@ -82,41 +85,45 @@ class Matrix(object):
       inverse.append([1 / self.g[0][0]])
       return Matrix(inverse)
     elif self.h == 2:
-      # Calculate a determinant matrix
-      det = self.determinant()
       # If the matrix is 2x2, check that the matrix is invertible
       if self.g[0][0] * self.g[1][1] == self.g[0][1] * self.g[1][0]:
         raise ValueError('The matrix is not invertible.')
       else:
-        # Start with a zero matrix and overwrite
-        inv = zeroes(self.h, self.w)
-        a = self.g[0][0]
-        b = self.g[0][1]
-        c = self.g[1][0]
-        d = self.g[1][1]
-      # Populate inverse grid with inverse value
-        inv[0][0] = (1/det) * d
-        inv[0][1] = (1/det) * (-1 * b)
-        inv[1][0] = (1/det) * (-1 * c)
-        inv[1][1] = (1/det) * a
-      return inv
-    else:
-      raise RuntimeError("Something else went wrong") 
+      # Trying Cayley–Hamilton method per direction of the reviewer.
+        return 1.0 / self.determinant() * (self.trace() * identity(self.w) - self)
+    #   # Calculate a determinant matrix
+    #   det = self.determinant()
+    #     # Start with a zero matrix and overwrite
+    #     inv = zeroes(self.h, self.w)
+    #     a = self.g[0][0]
+    #     b = self.g[0][1]
+    #     c = self.g[1][0]
+    #     d = self.g[1][1]
+    #   # Populate inverse grid with inverse value
+    #     inv[0][0] = (1/det) * d
+    #     inv[0][1] = (1/det) * (-1 * b)
+    #     inv[1][0] = (1/det) * (-1 * c)
+    #     inv[1][1] = (1/det) * a
+    #   return inv
+    # else:
+    #   raise RuntimeError("Something else went wrong") 
 
   def T(self):
     """
     Returns a transposed copy of this Matrix.
     """
     # TODO - your code here
-    # Start with a zero matrix and overwrite
-    t = zeroes(self.h, self.w)
+    # Thanks for taking a close look at this!
+    # Start with a zero matrix of TRANSPOSED H x W.
+    t = zeroes(self.w, self.h)
     # Loop through columns on outside loop
-    for c in range(self.w):
+    for r in range(self.h):
       # Loop through columns on inner loop
-      for r in range(self.h):
+      for c in range(self.w):
         # Column values will be filled by what were each row before
-        t[r][c] = self[c][r]
+        t[c][r] = self[r][c]
     return t
+
       
   def is_square(self):
     return self.h == self.w
@@ -178,12 +185,15 @@ class Matrix(object):
     """
     # TODO - your code here
     # Start with a zero matrix and overwrite with negative elements
-    ng = zeroes(self.h, self.w)
-    for i in range(self.h):
-        for j in range(self.w):
-          ng[i][j] = self.g[i][j] * -1
-    return ng
-      
+    # ng = zeroes(self.h, self.w)
+    # for i in range(self.h):
+    #     for j in range(self.w):
+    #       ng[i][j] = self.g[i][j] * -1
+    # return ng
+
+    # Trying double list comprehension per direction of reviewer.
+    return Matrix([[-self.g[row][col] for row in range(self.h)] for col in range(self.w)])
+
   def __sub__(self, other):
     """
     Defines the behavior of - operator (as subtraction)
@@ -195,6 +205,8 @@ class Matrix(object):
       for j in range(self.w):
         sub[i][j] = self.g[i][j] - other.g[i][j]
     return sub
+    # Trying the overloaded neg per direction of reviewer but did not work.
+    # return (self + -other)
 
   def __mul__(self, other):
     """
